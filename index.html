@@ -49,6 +49,14 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
+    html,
+    body {
+      overflow-x: hidden;
+      max-width: 100%;
+      width: 100%;
+      position: relative;
+    }
+
     html {
       scroll-behavior: smooth;
       scroll-padding-top: 90px;
@@ -57,7 +65,6 @@
     body {
       background-color: var(--bg);
       color: var(--text-main);
-      overflow-x: hidden;
       line-height: 1.6;
     }
 
@@ -80,6 +87,17 @@
     }
 
     /* ================= BACKGROUND GLOW ORBS ================= */
+    .bg-orbs-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .bg-orb {
       position: absolute;
       border-radius: 50%;
@@ -1804,10 +1822,22 @@
         padding: 12px 24px;
       }
 
+      html,
+      body {
+        overflow-x: hidden !important;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      .logo {
+        min-width: auto;
+      }
+
       .nav-links {
         position: fixed;
         top: 0;
-        right: -100%;
+        right: 0;
+        transform: translateX(100%);
         width: 80%;
         max-width: 320px;
         height: 100vh;
@@ -1818,11 +1848,15 @@
         align-items: flex-start;
         gap: 24px;
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+        visibility: hidden;
+        pointer-events: none;
       }
 
       .nav-links.active {
-        right: 0;
+        transform: translateX(0);
+        visibility: visible;
+        pointer-events: auto;
       }
 
       .mobile-menu {
@@ -1836,6 +1870,32 @@
       .typing,
       .final-typing {
         font-size: 32px;
+      }
+
+
+      .hero-visual {
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .pulse-ring {
+        max-width: 90vw;
+        max-height: 90vw;
+      }
+
+      .ring-1 {
+        width: 220px;
+        height: 220px;
+      }
+
+      .ring-2 {
+        width: 270px;
+        height: 270px;
+      }
+
+      .ring-3 {
+        width: 320px;
+        height: 320px;
       }
 
       .hero-logo {
@@ -2005,9 +2065,11 @@
 <body>
 
   <!-- BACKGROUND GLOW ORBS -->
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
+  <div class="bg-orbs-container" aria-hidden="true">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+  </div>
 
   <!-- NAVBAR -->
   <header class="navbar" id="navbar">
