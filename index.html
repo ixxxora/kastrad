@@ -2901,7 +2901,7 @@
     /* Aspirasi Form & Toast Notification */
 
     // Google Apps Script Webhook URL — paste your deployed Web App URL here after deployment
-    const SPREADSHEET_WEBHOOK_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const SPREADSHEET_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxyzq9wocq2Xb6A-TpF-1DOzBRbnuM8JxkHmJP21nDRJThgvm7Bbf90oe9ciHNpCjDtKA/exec';
 
     function handleAspirasiSubmit(event) {
       event.preventDefault();
@@ -2930,11 +2930,12 @@
 
       const waUrl = 'https://wa.me/6281392309175?text=' + encodeURIComponent(waText);
 
-      // Send to Google Sheets via Apps Script (no-cors, fire-and-forget)
+      // Send to Google Sheets via Apps Script (no-cors, fire-and-forget with keepalive)
       if (SPREADSHEET_WEBHOOK_URL && SPREADSHEET_WEBHOOK_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
         fetch(SPREADSHEET_WEBHOOK_URL, {
           method: 'POST',
           mode: 'no-cors',
+          keepalive: true,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
@@ -2948,20 +2949,13 @@
 
       // Show toast immediately
       const toast = document.getElementById('toast');
-      toast.classList.add('show');
+      if (toast) toast.classList.add('show');
 
       // Reset form
       document.getElementById('aspirasiForm').reset();
 
-      // Hide toast after 4.5 s
-      setTimeout(function() {
-        toast.classList.remove('show');
-      }, 4500);
-
-      // Redirect to WhatsApp after 800 ms
-      setTimeout(function() {
-        window.open(waUrl, '_blank') || (window.location.href = waUrl);
-      }, 800);
+      // Open WhatsApp directly (avoids mobile popup blocker)
+      window.location.href = waUrl;
     }
 
     /* 3D Tilt Effect on Hero Logo */
