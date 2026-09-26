@@ -1662,6 +1662,115 @@
       box-shadow: 0 12px 25px rgba(249, 115, 22, 0.45);
     }
 
+    /* ================= ASPIRASI SUCCESS CARD ================= */
+    .aspirasi-success-card {
+      font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+      text-align: center;
+      padding: 40px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .aspirasi-success-card .success-icon {
+      font-size: 56px;
+      line-height: 1;
+      filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.35));
+    }
+
+    .aspirasi-success-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .aspirasi-success-card > p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .success-action-box {
+      background: #F0FDF4;
+      border: 1.5px solid #BBF7D0;
+      border-radius: 16px;
+      padding: 20px 24px;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .success-action-box .action-hint {
+      font-size: 13px;
+      color: #166534;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .btn-wa-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      background: #10B981;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 13px 22px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.32);
+      transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .btn-wa-action:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(5, 150, 105, 0.40);
+    }
+
+    .btn-wa-action svg {
+      flex-shrink: 0;
+    }
+
+    .btn-kirim-lagi {
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .btn-kirim-lagi:hover {
+      color: var(--navy);
+    }
+
     /* Toast Notification */
     .toast {
       position: fixed;
@@ -2552,6 +2661,24 @@
             <span>🚀 Kirim Aspirasi Sekarang</span>
           </button>
         </form>
+
+        <div id="aspirasiSuccess" class="aspirasi-success-card" style="display: none;">
+          <div class="success-icon">✅</div>
+          <h3>Aspirasi Berhasil Terkirim!</h3>
+          <p>Aspirasi Anda telah tercatat secara aman di database Kementerian Kastrad BEM FKG UNISSULA untuk dikaji dan ditindaklanjuti.</p>
+
+          <div class="success-action-box">
+            <p class="action-hint">Butuh advokasi mendesak atau ingin berdiskusi langsung dengan pengurus?</p>
+            <a id="btnLanjutWa" href="#" target="_blank" class="btn-wa-action">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Lanjut Diskusi via WhatsApp Narahubung</span>
+            </a>
+          </div>
+
+          <button type="button" onclick="resetAspirasiView()" class="btn-kirim-lagi">
+            <span>← Kirim Aspirasi Lain</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -2915,27 +3042,27 @@
       // Default nama to anonymous if empty
       const nama = namaRaw || 'Mahasiswa FKG (Anonim)';
 
-      // Build WhatsApp message (using clean bullet points to prevent emoji corruption in WhatsApp)
+      // Build WhatsApp message (optional — user chooses to send)
       const waText =
-        'Assalamualaikum Wr. Wb.\n' +
-        'Halo Narahubung Kastrad BEM FKG UNISSULA,\n\n' +
-        'Saya ingin menyampaikan aspirasi/masukan melalui portal resmi Suara Mahasiswa:\n\n' +
-        '• *Identitas:* ' + nama + '\n' +
-        '• *Angkatan:* ' + angkatan + '\n' +
-        '• *Kategori:* ' + kategori + '\n\n' +
+        '*Identitas:* ' + nama + '\n' +
+        '*Angkatan:* ' + angkatan + '\n' +
+        '*Kategori:* ' + kategori + '\n\n' +
         '*Isi Aspirasi:*\n' +
-        '"' + pesan + '"\n\n' +
-        '---\n' +
-        'Mohon untuk dapat ditampung dan dikawal demi kemajuan FKG UNISSULA. Terima kasih!';
+        '"' + pesan + '"';
 
       const waUrl = 'https://wa.me/6281392309175?text=' + encodeURIComponent(waText);
 
-      // Send to Google Sheets via Apps Script
+      // Pre-set the WhatsApp action button href
+      const btnWa = document.getElementById('btnLanjutWa');
+      if (btnWa) btnWa.href = waUrl;
+
+      // Send to Google Sheets via Apps Script (fire-and-forget)
       if (SPREADSHEET_WEBHOOK_URL && SPREADSHEET_WEBHOOK_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
         try {
           fetch(SPREADSHEET_WEBHOOK_URL, {
             method: 'POST',
             mode: 'no-cors',
+            keepalive: true,
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({
               timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
@@ -2948,17 +3075,22 @@
         } catch (e) {}
       }
 
-      // Show toast immediately
+      // Show toast notification
       const toast = document.getElementById('toast');
-      if (toast) toast.classList.add('show');
+      if (toast) {
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 4000);
+      }
 
-      // Reset form
+      // Hide form, show success card — user stays on page
+      document.getElementById('aspirasiForm').style.display = 'none';
+      document.getElementById('aspirasiSuccess').style.display = 'flex';
+    }
+
+    function resetAspirasiView() {
       document.getElementById('aspirasiForm').reset();
-
-      // Give 600ms for fetch to dispatch to Google Sheets before opening WhatsApp
-      setTimeout(function() {
-        window.location.href = waUrl;
-      }, 600);
+      document.getElementById('aspirasiForm').style.display = 'block';
+      document.getElementById('aspirasiSuccess').style.display = 'none';
     }
 
     /* 3D Tilt Effect on Hero Logo */
