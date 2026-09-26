@@ -9,22 +9,23 @@
     content="Website Resmi Kementerian Kajian, Strategis, dan Advokasi (Kastrad) BEM FKG UNISSULA Kabinet Cipta Karsa. Tempat aspirasi, kajian isu, dan pengabdian mahasiswa.">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="./logo.png">
-  <link rel="apple-touch-icon" href="./logo.png">
+  <link rel="icon" type="image/png" href="https://kastradbemfkgunissula.vercel.app/logo.png">
+  <link rel="apple-touch-icon" href="https://kastradbemfkgunissula.vercel.app/logo.png">
   <meta name="theme-color" content="#0F172A">
 
   <!-- OpenGraph / WhatsApp / Telegram Social Share Preview -->
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kastradbemfkgunissula.vercel.app/">
   <meta property="og:title" content="Kastrad BEM FKG UNISSULA | Analisis Kritis, Solusi Strategis">
   <meta property="og:description" content="Website Resmi Kementerian Kajian, Strategis, dan Advokasi (Kastrad) BEM FKG UNISSULA Kabinet Cipta Karsa 2026. Salurkan aspirasi mahasiswa dan baca kajian isu terkini.">
-  <meta property="og:image" content="./logo.png">
+  <meta property="og:image" content="https://kastradbemfkgunissula.vercel.app/logo.png">
   <meta property="og:image:type" content="image/png">
 
   <!-- Twitter / X Card Preview -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Kastrad BEM FKG UNISSULA">
   <meta name="twitter:description" content="Kementerian Kajian, Strategis, dan Advokasi BEM FKG UNISSULA Kabinet Cipta Karsa.">
-  <meta name="twitter:image" content="./logo.png">
+  <meta name="twitter:image" content="https://kastradbemfkgunissula.vercel.app/logo.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2512,7 +2513,7 @@
         <form id="aspirasiForm" onsubmit="handleAspirasiSubmit(event)">
           <div class="form-group">
             <label for="inputNama">Nama Lengkap (Boleh Kosong / Anonim)</label>
-            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Mahasiswa FKG (Atau Kosongkan)">
+            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Mahasiswa FKG (Atau Kosongkan untuk Anonim)">
           </div>
 
           <div class="form-group">
@@ -2898,16 +2899,69 @@
     });
 
     /* Aspirasi Form & Toast Notification */
+
+    // Google Apps Script Webhook URL — paste your deployed Web App URL here after deployment
+    const SPREADSHEET_WEBHOOK_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
     function handleAspirasiSubmit(event) {
       event.preventDefault();
-      const toast = document.getElementById("toast");
-      toast.classList.add("show");
 
-      document.getElementById("aspirasiForm").reset();
+      // Read form values
+      const namaRaw = (document.getElementById('inputNama').value || '').trim();
+      const angkatan = document.getElementById('inputAngkatan').value;
+      const kategori = document.getElementById('inputKategori').value;
+      const pesan = document.getElementById('inputPesan').value.trim();
 
-      setTimeout(() => {
-        toast.classList.remove("show");
+      // Default nama to anonymous if empty
+      const nama = namaRaw || 'Mahasiswa FKG (Anonim)';
+
+      // Build WhatsApp message
+      const waText =
+        'Assalamualaikum Wr. Wb.\n' +
+        'Halo Narahubung Kastrad BEM FKG UNISSULA,\n\n' +
+        'Saya ingin menyampaikan aspirasi/masukan melalui portal resmi Suara Mahasiswa:\n\n' +
+        '\uD83D\uDCCC *Identitas:* ' + nama + '\n' +
+        '\uD83C\uDF93 *Angkatan:* ' + angkatan + '\n' +
+        '\uD83C\uDFF7\uFE0F *Kategori:* ' + kategori + '\n\n' +
+        '\uD83D\uDCDD *Isi Aspirasi:*\n' +
+        '"' + pesan + '"\n\n' +
+        '---\n' +
+        'Mohon untuk dapat ditampung dan dikawal demi kemajuan FKG UNISSULA. Terima kasih!';
+
+      const waUrl = 'https://wa.me/6281392309175?text=' + encodeURIComponent(waText);
+
+      // Send to Google Sheets via Apps Script (no-cors, fire-and-forget)
+      if (SPREADSHEET_WEBHOOK_URL && SPREADSHEET_WEBHOOK_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+        fetch(SPREADSHEET_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+            nama: nama,
+            angkatan: angkatan,
+            kategori: kategori,
+            pesan: pesan
+          })
+        }).catch(function() { /* no-cors — silently ignore */ });
+      }
+
+      // Show toast immediately
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+
+      // Reset form
+      document.getElementById('aspirasiForm').reset();
+
+      // Hide toast after 4.5 s
+      setTimeout(function() {
+        toast.classList.remove('show');
       }, 4500);
+
+      // Redirect to WhatsApp after 800 ms
+      setTimeout(function() {
+        window.open(waUrl, '_blank') || (window.location.href = waUrl);
+      }, 800);
     }
 
     /* 3D Tilt Effect on Hero Logo */
