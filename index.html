@@ -2619,10 +2619,10 @@
       </div>
 
       <div class="aspirasi-form reveal-on-scroll stagger-2">
-        <form id="aspirasiForm" onsubmit="handleAspirasiSubmit(event)">
+        <form id="aspirasiForm" onsubmit="handleAspirasiSubmit(event)" autocomplete="off">
           <div class="form-group">
             <label for="inputNama">Nama Lengkap (Boleh Kosong / Anonim)</label>
-            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Mahasiswa FKG (Atau Kosongkan untuk Anonim)">
+            <input type="text" id="inputNama" class="form-control" placeholder="Contoh: Mahasiswa FKG (Atau Kosongkan untuk Anonim)" autocomplete="off">
           </div>
 
           <div class="form-group">
@@ -3042,13 +3042,18 @@
       // Default nama to anonymous if empty
       const nama = namaRaw || 'Mahasiswa FKG (Anonim)';
 
-      // Build WhatsApp message (optional — user chooses to send)
+      // Build complete WhatsApp message as originally designed by Tuan (without bullets)
       const waText =
+        'Assalamualaikum Wr. Wb.\n' +
+        'Halo Narahubung Kastrad BEM FKG UNISSULA,\n\n' +
+        'Saya ingin menyampaikan aspirasi/masukan melalui portal resmi Suara Mahasiswa:\n\n' +
         '*Identitas:* ' + nama + '\n' +
         '*Angkatan:* ' + angkatan + '\n' +
         '*Kategori:* ' + kategori + '\n\n' +
         '*Isi Aspirasi:*\n' +
-        '"' + pesan + '"';
+        '"' + pesan + '"\n\n' +
+        '---\n' +
+        'Mohon untuk dapat ditampung dan dikawal demi kemajuan FKG UNISSULA. Terima kasih!';
 
       const waUrl = 'https://wa.me/6281392309175?text=' + encodeURIComponent(waText);
 
