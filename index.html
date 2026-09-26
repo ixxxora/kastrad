@@ -2915,36 +2915,37 @@
       // Default nama to anonymous if empty
       const nama = namaRaw || 'Mahasiswa FKG (Anonim)';
 
-      // Build WhatsApp message
+      // Build WhatsApp message (using clean bullet points to prevent emoji corruption in WhatsApp)
       const waText =
         'Assalamualaikum Wr. Wb.\n' +
         'Halo Narahubung Kastrad BEM FKG UNISSULA,\n\n' +
         'Saya ingin menyampaikan aspirasi/masukan melalui portal resmi Suara Mahasiswa:\n\n' +
-        '\uD83D\uDCCC *Identitas:* ' + nama + '\n' +
-        '\uD83C\uDF93 *Angkatan:* ' + angkatan + '\n' +
-        '\uD83C\uDFF7\uFE0F *Kategori:* ' + kategori + '\n\n' +
-        '\uD83D\uDCDD *Isi Aspirasi:*\n' +
+        '• *Identitas:* ' + nama + '\n' +
+        '• *Angkatan:* ' + angkatan + '\n' +
+        '• *Kategori:* ' + kategori + '\n\n' +
+        '*Isi Aspirasi:*\n' +
         '"' + pesan + '"\n\n' +
         '---\n' +
         'Mohon untuk dapat ditampung dan dikawal demi kemajuan FKG UNISSULA. Terima kasih!';
 
       const waUrl = 'https://wa.me/6281392309175?text=' + encodeURIComponent(waText);
 
-      // Send to Google Sheets via Apps Script (no-cors, fire-and-forget with keepalive)
+      // Send to Google Sheets via Apps Script
       if (SPREADSHEET_WEBHOOK_URL && SPREADSHEET_WEBHOOK_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
-        fetch(SPREADSHEET_WEBHOOK_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          keepalive: true,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
-            nama: nama,
-            angkatan: angkatan,
-            kategori: kategori,
-            pesan: pesan
-          })
-        }).catch(function() { /* no-cors — silently ignore */ });
+        try {
+          fetch(SPREADSHEET_WEBHOOK_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+              nama: nama,
+              angkatan: angkatan,
+              kategori: kategori,
+              pesan: pesan
+            })
+          }).catch(function() {});
+        } catch (e) {}
       }
 
       // Show toast immediately
@@ -2954,8 +2955,10 @@
       // Reset form
       document.getElementById('aspirasiForm').reset();
 
-      // Open WhatsApp directly (avoids mobile popup blocker)
-      window.location.href = waUrl;
+      // Give 600ms for fetch to dispatch to Google Sheets before opening WhatsApp
+      setTimeout(function() {
+        window.location.href = waUrl;
+      }, 600);
     }
 
     /* 3D Tilt Effect on Hero Logo */
